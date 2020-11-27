@@ -1,4 +1,5 @@
 package util
+
 // Copyright (C) 2020 ConsenSys Software Inc
 
 import (

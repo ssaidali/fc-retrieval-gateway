@@ -1,6 +1,6 @@
 package storage
-// Copyright (C) 2020 ConsenSys Software Inc
 
+// Copyright (C) 2020 ConsenSys Software Inc
 
 // Storage is the interface which all storage providers implement.
 type Storage interface {
@@ -10,14 +10,10 @@ type Storage interface {
 	GetKeys() (keys []string)
 }
 
-
 // Base is the base class for all storage providers.
 type Base struct {
 	// Currently, nothing in base class.
 }
-
-
-
 
 // SType is an enum to define type of storage.
 type SType int
@@ -25,8 +21,8 @@ type SType int
 // Values of types of storage implementation
 const (
 	KeyValue SType = iota //1
-	Mongo // 2
-	Redis // 3
+	Mongo                 // 2
+	Redis                 // 3
 )
 
 // String returns the type of storage as a string
@@ -44,7 +40,6 @@ func (t SType) String() string {
 	}
 }
 
-
 // GetSingleInstance is a factory method to get the single instance of the storage.
 func GetSingleInstance(t SType) *Storage {
 	var s Storage
@@ -60,6 +55,3 @@ func GetSingleInstance(t SType) *Storage {
 	}
 	return &s
 }
-
-
-

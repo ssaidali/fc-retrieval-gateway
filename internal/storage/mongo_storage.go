@@ -1,15 +1,15 @@
 package storage
+
 // Copyright (C) 2020 ConsenSys Software Inc
 
 import (
+	"log"
+
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
-	"log"
 )
 
-
 // Storage for key-value pairs using mongodb.
-
 
 // Name of mongodb host.
 const mongoHostname = "mongodb"
@@ -27,14 +27,12 @@ type MongoStorage struct {
 	session *mgo.Session
 }
 
-
-
 // Create a new instance
 func newMongoStorage() *MongoStorage {
 	m := MongoStorage{}
 	m.session = getSession()
 
-	var _ Storage = &m  // Enforce interface compliance
+	var _ Storage = &m // Enforce interface compliance
 
 	return &m
 }
@@ -42,17 +40,15 @@ func newMongoStorage() *MongoStorage {
 // GetMongoStorage returns the Mongo db implementation of the KeyValueStorage.
 func GetMongoStorage() *MongoStorage {
 	if mongoInstance == nil {
-		mongoInstance =  newMongoStorage()
+		mongoInstance = newMongoStorage()
 	}
 	return mongoInstance
 }
 
 // Type returns the type of storage
 func (s *MongoStorage) Type() SType {
-	return Mongo;
+	return Mongo
 }
-
-
 
 // Put adds to the map / replace an existing value.
 func (s *MongoStorage) Put(key, value string) {
@@ -71,7 +67,6 @@ func (s *MongoStorage) Put(key, value string) {
 	}
 }
 
-
 // GetValue returns a value given a key
 func (s *MongoStorage) GetValue(key string) (val string, exists bool) {
 	session := s.session.Copy()
@@ -88,7 +83,6 @@ func (s *MongoStorage) GetValue(key string) (val string, exists bool) {
 	return kv.Value, true
 }
 
-
 // GetKeys returns all of the keys
 func (s *MongoStorage) GetKeys() (keys []string) {
 	session := s.session.Copy()
@@ -99,21 +93,18 @@ func (s *MongoStorage) GetKeys() (keys []string) {
 	collection := session.DB(dbName).C(dbCollection)
 	iter := collection.Find(bson.M{}).Iter()
 
-	keys = make([]string, 0)   // Even if there are no elements, return something
+	keys = make([]string, 0) // Even if there are no elements, return something
 	for iter.Next(&kv) {
 		keys = append(keys, kv.Key)
 	}
 	return
 }
 
-
-
 // CollectionKeyValue holds the database collection.
 type CollectionKeyValue struct {
-	Key   	string	`bson:"Key"`
-	Value 	string  `bson:"Value"`
+	Key   string `bson:"Key"`
+	Value string `bson:"Value"`
 }
-
 
 func getSession() *mgo.Session {
 	// Connect to our local mongo
@@ -127,4 +118,3 @@ func getSession() *mgo.Session {
 	// s.SetSafe(&mgo.Safe{})
 	return s
 }
-

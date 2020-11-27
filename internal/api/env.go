@@ -1,32 +1,32 @@
 package api
+
 // Copyright (C) 2020 ConsenSys Software Inc
 
 import (
-	"github.com/ant0ine/go-json-rest/rest"
-	"syscall"
 	"net/http"
 	"strings"
+	"syscall"
+
+	restful "github.com/emicklei/go-restful/v3"
 )
 
-func getEnv(w rest.ResponseWriter, r *rest.Request) {
-	env := syscall.Environ();
+func getEnv(r *restful.Request, w *restful.Response) {
+	env := syscall.Environ()
 
-	queryValues := r.URL.Query()
+	queryValues := r.PathParameters()
 	numQueryKeyValuePairs := len(queryValues)
 
-	name := queryValues.Get("name")
-
-
+	name := queryValues["name"]
 
 	if len(name) != 0 {
 		// "name" key-value pair exists.
 		if numQueryKeyValuePairs != 1 {
-			rest.Error(w, "Invalid parameter. Parameter values: name or no parameter", http.StatusBadRequest)
+			w.WriteErrorString(http.StatusBadRequest, "Invalid parameter. Parameter values: name or no parameter")
 			return
 		}
 
-		if !isB64OrSimpleAscii(name) {
-			rest.Error(w, "name not Base64Uri encoded or ASCII", http.StatusBadRequest)
+		if !isB64OrSimpleASCII(name) {
+			w.WriteErrorString(http.StatusBadRequest, "Name not Base64Uri encoded or ASCII")
 			return
 		}
 
@@ -34,25 +34,23 @@ func getEnv(w rest.ResponseWriter, r *rest.Request) {
 		for _, s := range env {
 			nameVal := strings.Split(s, "=")
 			if nameVal[0] == name {
-				value := nameVal[1];
-				w.WriteJson(&value)
+				value := nameVal[1]
+				w.WriteAsJson(&value)
 				return
 			}
 
 		}
 
-		errMsg := name + " not found";
-		w.WriteJson(&errMsg)
+		errMsg := name + " not found"
+		w.WriteAsJson(&errMsg)
 		return
 	}
 	// return all environment variables.
 
 	if numQueryKeyValuePairs != 0 {
-		rest.Error(w, "Invalid parameter. Parameter values: name or no parameter", http.StatusBadRequest)
+		w.WriteErrorString(http.StatusBadRequest, "Invalid parameter. Parameter values: name or no parameter")
 		return
 	}
 
-
-	w.WriteJson(&env)
+	w.WriteAsJson(&env)
 }
-

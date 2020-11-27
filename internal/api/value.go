@@ -1,11 +1,16 @@
 package api
+
 // Copyright (C) 2020 ConsenSys Software Inc
 
 import (
-	"github.com/ant0ine/go-json-rest/rest"
+	"encoding/json"
+	"errors"
+	"io/ioutil"
 	"log"
 	"net/http"
+
 	"github.com/ConsenSys/fc-retrieval-gateway/internal/storage"
+	restful "github.com/emicklei/go-restful/v3"
 )
 
 // KeyValue holds keys and values that are stored
@@ -14,30 +19,29 @@ type KeyValue struct {
 	Value string
 }
 
-
-
-
-func setValue(w rest.ResponseWriter, r *rest.Request) {
+func setValue(r *restful.Request, w *restful.Response) {
 	log.Println("setValue: start")
-//TODO this doesn't compile with new version of Go	log.Printf("setValue: request: \n%s\n", r)
-	key, value, e := extractKeyValue(w, r)
+	//TODO this doesn't compile with new version of Go	log.Printf("setValue: request: \n%s\n", r)
+
+	key, value, e := extractKeyValue(r, w)
+
 	if e {
 		log.Println("setValue: Extract key value pair error")
 		// NOTE: HTTP error already set-up.
 		return
 	}
-	if !isB64OrSimpleAscii(key) {
+	if !isB64OrSimpleASCII(key) {
 		log.Println("setValue: key not Base64Url or ASCII encoded")
-		rest.Error(w, "key not Base64Url or ASCII encoded", http.StatusBadRequest)
+		w.WriteErrorString(http.StatusBadRequest, "Name not Base64Uri encoded or ASCII")
 		return
 	}
-	if !isB64OrSimpleAscii(value) {
+	if !isB64OrSimpleASCII(value) {
 		log.Println("setValue: value not Base64Url or ASCII encoded")
-		rest.Error(w, "value not Base64Url or ASCII encoded", http.StatusBadRequest)
+		w.WriteErrorString(http.StatusBadRequest, "Value not Base64Uri encoded or ASCII")
 		return
 	}
 
-	store := getStorage();
+	store := getStorage()
 	//store := storage.GetKeyValueStorage()
 
 	store.Put(key, value)
@@ -47,67 +51,63 @@ func setValue(w rest.ResponseWriter, r *rest.Request) {
 	log.Println("setValue: done")
 }
 
+func getKeyValues(r *restful.Request, w *restful.Response) {
+	store := getStorage()
 
-
-
-func getKeyValues(w rest.ResponseWriter, r *rest.Request) {
-	store := getStorage();
-
-	queryValues := r.URL.Query()
+	queryValues := r.Request.URL.Query()
 	numQueryKeyValuePairs := len(queryValues)
 
 	key := queryValues.Get("Key")
 	log.Printf("Key: %s\n", key)
 	if len(key) != 0 {
 		if numQueryKeyValuePairs != 1 {
-			rest.Error(w, "Invalid parameter. Parameter values: Key=key, or no parameters", http.StatusBadRequest)
+			w.WriteErrorString(http.StatusBadRequest, "Invalid parameter. Parameter values: Key=key, or no parameters")
 			return
 		}
 
-		if !isB64OrSimpleAscii(key) {
-			rest.Error(w, "key not Base64Url or ASCII encoded", http.StatusBadRequest)
+		if !isB64OrSimpleASCII(key) {
+			w.WriteErrorString(http.StatusBadRequest, "Key not Base64Url or ASCII encoded")
 			return
 		}
 
 		value, exists := store.GetValue(key)
 		//log.Printf("value: %s\n", value)
-		if (exists) {
-			w.WriteJson(&value)
+		if exists {
+			w.WriteAsJson(&value)
 			return
 		}
 		value = "ERROR: Key value not set"
-		w.WriteJson(&value)
+		w.WriteAsJson(&value)
 		return
 	}
 	// return all keys.
 
 	if numQueryKeyValuePairs != 0 {
-		rest.Error(w, "Invalid parameter. Parameter values: Key=key, or no parameters", http.StatusBadRequest)
+		w.WriteErrorString(http.StatusBadRequest, "Invalid parameter. Parameter values: Key=key, or no parameters")
 		return
 	}
 
 	keys := store.GetKeys()
-	w.WriteJson(&keys)
+	w.WriteAsJson(&keys)
 }
-
 
 func getStorage() storage.Storage {
 	store := storage.GetSingleInstance(storage.Redis)
 	return *store
 }
 
-
-func extractKeyValue(w rest.ResponseWriter, r *rest.Request) (k, v string, e bool){
+func extractKeyValue(r *restful.Request, w *restful.Response) (k, v string, e bool) {
 	log.Println("ExtractKeyValue: start")
 
 	e = true
 
 	keyValue := KeyValue{}
 
-	err := r.DecodeJsonPayload(&keyValue)
+	err := decodeJSONPayload(r, &keyValue)
+
 	if err != nil {
 		log.Println("Error: ", err.Error())
-		rest.Error(w, err.Error(), http.StatusBadRequest)
+		w.WriteErrorString(http.StatusBadRequest, err.Error())
 		return
 	}
 	log.Printf("Key: %s, Value: %s\n", keyValue.Key, keyValue.Value)
@@ -118,4 +118,20 @@ func extractKeyValue(w rest.ResponseWriter, r *rest.Request) (k, v string, e boo
 
 	e = false
 	return
+}
+
+func decodeJSONPayload(r *restful.Request, v interface{}) error {
+	content, err := ioutil.ReadAll(r.Request.Body)
+	r.Request.Body.Close()
+	if err != nil {
+		return err
+	}
+	if len(content) == 0 {
+		return errors.New("JSON payload is empty")
+	}
+	err = json.Unmarshal(content, v)
+	if err != nil {
+		return err
+	}
+	return nil
 }

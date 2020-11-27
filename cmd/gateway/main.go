@@ -2,10 +2,10 @@ package main
 
 import (
 	"log"
+
 	"github.com/ConsenSys/fc-retrieval-gateway/internal/api"
 	"github.com/ConsenSys/fc-retrieval-gateway/internal/util"
 )
-
 
 func main() {
 	log.Println("Filecoin Gateway Start-up Start: " + util.GetTimeNowString())
@@ -29,7 +29,7 @@ func main() {
 	log.Println("Filecoin Gateway Start-up Done: " + util.GetTimeNowString())
 
 	// Wait forever.
-	select{}
+	select {}
 }
 
 func gracefulExit() {

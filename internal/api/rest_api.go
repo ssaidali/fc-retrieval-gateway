@@ -1,16 +1,17 @@
 package api
+
 // Copyright (C) 2020 ConsenSys Software Inc
 
 import (
 	"log"
-	"github.com/ant0ine/go-json-rest/rest"
-	"net/http"
-	"github.com/ConsenSys/fc-retrieval-gateway/internal/util"
-	"os"
 	"net"
+	"net/http"
+	"os"
 	"time"
-)
 
+	"github.com/ConsenSys/fc-retrieval-gateway/internal/util"
+	restful "github.com/emicklei/go-restful/v3"
+)
 
 // StartRestAPI starts the REST API as a separate go routine.
 // Any start-up errors are returned.
@@ -18,74 +19,56 @@ func StartRestAPI(settings util.AppSettings) error {
 	// Start the REST API and block until the error code is set.
 	errChan := make(chan error, 1)
 	go startRestAPI(settings, errChan)
-	return <- errChan
+	return <-errChan
 }
-
 
 func startRestAPI(settings util.AppSettings, errChannel chan<- error) {
-//	rest.ErrorFieldName = dtruthcommon.ErrorMsg
+	service := new(restful.WebService)
+	service.
+		Path("/").Consumes(restful.MIME_JSON).Produces(restful.MIME_JSON).
+		Route(service.GET("/version").To(checkVersion)). // Get code version
+		Route(service.GET("/id").To(showID)).            // Get something to show which service has been connected with.
 
-	api := rest.NewApi()
-	api.Use(rest.DefaultDevStack...)
-	router, err := rest.MakeRouter(
-		rest.Get("/version", checkVersion),             // Get code version
-		rest.Get("/id", showID),			// Get something to show which service has been connected with.
+		Route(service.GET("/env").To(getEnv)). // Get environment variable(s).
+		// /env returns all environment variables.
+		// /env?name=<env> returns the environment variable env
 
-		rest.Get("/env", getEnv),                       // Get environment variable(s).
-								// /env returns all environment variables.
-								// /env?name=<env> returns the environment variable env
+		Route(service.GET("/time").To(getTime)). // Get system time.
 
-		rest.Get("/time", getTime),                       // Get system time.
+		Route(service.GET("/ip").To(getIP)).         // Get IP address.
+		Route(service.GET("/host").To(getHostname)). // Get host name.
 
-		rest.Get("/ip", getIP),                      	// Get IP address.
-		rest.Get("/host", getHostname),                	// Get host name.
+		// Route(service.GET("/config").To(getConfig)). // Get the current config.
 
-
-
-//		rest.Get("/config", getConfig),                 // Get the current config.
-
-		rest.Post("/value", setValue),			// Set a value.
-		rest.Get("/value", getKeyValues),		// Get a value given a key or a list of all the keys.
-
-		rest.Get("/eth/getbalance", getEthBalance),
-	)
-	if err != nil {
-		log.Fatal(err)
-		errChannel <- err
-		return
-	}
+		Route(service.POST("/value").To(setValue)).   // Set a value.
+		Route(service.GET("/value").To(getKeyValues)) // Get a value given a key or a list of all the keys.
 
 	log.Println("Running REST API on: " + settings.BindRestAPI)
-	api.SetApp(router)
+	restful.Add(service)
 	errChannel <- nil
-	log.Fatal(http.ListenAndServe(":" + settings.BindRestAPI, api.MakeHandler()))
+	log.Fatal(http.ListenAndServe(":"+settings.BindRestAPI, nil))
 }
 
-func checkVersion(w rest.ResponseWriter, r *rest.Request) {
+func checkVersion(r *restful.Request, w *restful.Response) {
 	v := util.GetVersion()
-	w.WriteJson(&v)
+	w.WriteAsJson(&v)
 }
 
-
-
-
-func getTime(w rest.ResponseWriter, r *rest.Request) {
-	w.WriteJson(time.Now())
+func getTime(r *restful.Request, w *restful.Response) {
+	w.WriteAsJson(time.Now())
 }
 
-
-func getHostname(w rest.ResponseWriter, r *rest.Request) {
+func getHostname(r *restful.Request, w *restful.Response) {
 	name, err := os.Hostname()
 	if err != nil {
 		log.Printf("Get host name1: %v\n", err)
 		return
 	}
 
-	w.WriteJson(name)
+	w.WriteAsJson(name)
 }
 
-
-func getIP(w rest.ResponseWriter, r *rest.Request) {
+func getIP(r *restful.Request, w *restful.Response) {
 	name, err := os.Hostname()
 	if err != nil {
 		log.Printf("Get host name2: %v\n", err)
@@ -98,18 +81,14 @@ func getIP(w rest.ResponseWriter, r *rest.Request) {
 		return
 	}
 
-	w.WriteJson(addrs)
+	w.WriteAsJson(addrs)
 }
 
-func showID(w rest.ResponseWriter, r *rest.Request) {
-	w.WriteJson("GATEWAY")
+func showID(r *restful.Request, w *restful.Response) {
+	w.WriteAsJson("GATEWAY")
 }
 
-func ping(w rest.ResponseWriter, r *rest.Request) {
+func ping(r *restful.Request, w *restful.Response) {
 	// TODO check that the request includes the word "PING"
-	w.WriteJson("PONG")
+	w.WriteAsJson("PONG")
 }
-
-
-
-

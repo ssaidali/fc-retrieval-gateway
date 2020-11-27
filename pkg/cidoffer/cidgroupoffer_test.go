@@ -1,4 +1,5 @@
 package cidoffer
+
 /*
  * Copyright 2020 ConsenSys Software Inc.
  *
@@ -14,21 +15,19 @@ package cidoffer
  * SPDX-License-Identifier: Apache-2.0
  */
 
-
 import (
-    "math/big"
-    "testing"
+	"math/big"
+	"testing"
 )
 
-
 func TestGetPrice(t *testing.T) {
-    cid := big.NewInt(7)
-    cids := []big.Int{} 
-    cids = append(cids, *cid)
-    price := uint64(5)
-    expiry := uint64(10)
-    c := NewCidGroupOffer(&cids, price, expiry)
-    if (c.GetPrice() != price) {
-        t.Errorf("Expected: %d, Actual: %d", price, c.GetPrice())
-    }
+	cid := big.NewInt(7)
+	cids := []big.Int{}
+	cids = append(cids, *cid)
+	price := uint64(5)
+	expiry := uint64(10)
+	c := NewCidGroupOffer(&cids, price, expiry)
+	if c.GetPrice() != price {
+		t.Errorf("Expected: %d, Actual: %d", price, c.GetPrice())
+	}
 }

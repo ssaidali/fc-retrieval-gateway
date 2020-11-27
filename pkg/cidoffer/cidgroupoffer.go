@@ -1,4 +1,5 @@
 package cidoffer
+
 /*
  * Copyright 2020 ConsenSys Software Inc.
  *
@@ -14,32 +15,28 @@ package cidoffer
  * SPDX-License-Identifier: Apache-2.0
  */
 
-
 import (
-    "math/big"
+	"math/big"
 )
 
-
-
-// CidGroupOffer represents a CID Group Offer. That is, an offer to deliver content 
+// CidGroupOffer represents a CID Group Offer. That is, an offer to deliver content
 // for Piece CIDs at a certain price
 type CidGroupOffer struct {
-    cids []big.Int
-    price uint64
-    expiry uint64
+	cids   []big.Int
+	price  uint64
+	expiry uint64
 }
 
-
 // NewCidGroupOffer creates an unsigned CID Group Offer.
-func NewCidGroupOffer(cids *[]big.Int, price, expiry uint64) (*CidGroupOffer) {
+func NewCidGroupOffer(cids *[]big.Int, price, expiry uint64) *CidGroupOffer {
 	var c = CidGroupOffer{}
-    c.cids = *cids
-    c.price = price
-    c.expiry = expiry
+	c.cids = *cids
+	c.price = price
+	c.expiry = expiry
 	return &c
 }
 
 // GetPrice returns the price that the content for the CIDs will be supplied at.
-func (c *CidGroupOffer) GetPrice() (uint64) {
-    return c.price
+func (c *CidGroupOffer) GetPrice() uint64 {
+	return c.price
 }

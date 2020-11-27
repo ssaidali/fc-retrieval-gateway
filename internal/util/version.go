@@ -1,4 +1,5 @@
 package util
+
 // Copyright (C) 2020 ConsenSys Software Inc
 
 const ver = "1.0"
@@ -14,5 +15,3 @@ type VersionInfo struct {
 func GetVersion() VersionInfo {
 	return VersionInfo{ver, build}
 }
-
-

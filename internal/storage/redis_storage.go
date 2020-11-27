@@ -1,17 +1,18 @@
 package storage
+
 // Copyright (C) 2020 ConsenSys Software Inc
 
 import (
-	"github.com/xyproto/simpleredis"
 	"log"
-)
 
+	"github.com/xyproto/simpleredis"
+)
 
 // Storage for key-value pairs using mongodb.
 
-
 // Name of mongodb host.
 const redisHostname = "redis:6379"
+
 //const REDIS_HOSTNAME = "redis-master:6379"
 
 const kvName = "KV"
@@ -27,33 +28,28 @@ type RedisStorage struct {
 	kv *simpleredis.KeyValue
 }
 
-
-
 // Create a new instance
 func newRedisStorage() *RedisStorage {
 	m := RedisStorage{}
 	m.masterPool = simpleredis.NewConnectionPoolHost(redisHostname)
 	m.kv = simpleredis.NewKeyValue(m.masterPool, kvName)
 	m.kv.SelectDatabase(1)
-	var _ Storage = &m  // Enforce interface compliance
+	var _ Storage = &m // Enforce interface compliance
 	return &m
 }
 
 // GetRedisStorage returns the Redis implementation of KeyValueStorage.
 func GetRedisStorage() *RedisStorage {
 	if redisInstance == nil {
-		redisInstance =  newRedisStorage()
+		redisInstance = newRedisStorage()
 	}
 	return redisInstance
 }
 
-
 // Type returns the type of storage.
 func (s *RedisStorage) Type() SType {
-	return Redis;
+	return Redis
 }
-
-
 
 // Put adds to the map / replace an existing value.
 func (s *RedisStorage) Put(key, value string) {
@@ -62,7 +58,6 @@ func (s *RedisStorage) Put(key, value string) {
 		log.Fatal(err)
 	}
 }
-
 
 // GetValue returns a value given a key
 func (s *RedisStorage) GetValue(key string) (val string, exists bool) {
@@ -74,12 +69,9 @@ func (s *RedisStorage) GetValue(key string) (val string, exists bool) {
 	return val, true
 }
 
-
 // GetKeys returns all of the keys
 func (s *RedisStorage) GetKeys() (keys []string) {
-	keys = make([]string, 0)   // Even if there are no elements, return something
+	keys = make([]string, 0) // Even if there are no elements, return something
 	keys = append(keys, "Not implemented yet")
 	return
 }
-
-
