@@ -9,13 +9,13 @@ import (
 
 	"github.com/ConsenSys/fc-retrieval-gateway/internal/api"
 	"github.com/ConsenSys/fc-retrieval-gateway/internal/gateway"
-	"github.com/ConsenSys/fc-retrieval-gateway/internal/util"
+	"github.com/ConsenSys/fc-retrieval-gateway/internal/util/settings"
 	"github.com/ConsenSys/fc-retrieval-gateway/pkg/messages"
 	"github.com/ConsenSys/fc-retrieval-gateway/pkg/tcpcomms"
 )
 
 // StartProviderAPI starts the TCP API as a separate go routine.
-func StartProviderAPI(settings util.AppSettings, g *api.Gateway) error {
+func StartProviderAPI(settings settings.AppSettings, g *api.Gateway) error {
 	// Start server
 	ln, err := net.Listen("tcp", settings.BindProviderAPI)
 	if err != nil {

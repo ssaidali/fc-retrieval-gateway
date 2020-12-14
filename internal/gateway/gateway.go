@@ -6,7 +6,7 @@ import (
 
 	"github.com/ConsenSys/fc-retrieval-gateway/internal/api"
 	"github.com/ConsenSys/fc-retrieval-gateway/internal/api/clientapi"
-	"github.com/ConsenSys/fc-retrieval-gateway/internal/util"
+	"github.com/ConsenSys/fc-retrieval-gateway/internal/util/settings"
 	"github.com/ConsenSys/fc-retrieval-gateway/pkg/nodeid"
 )
 
@@ -14,7 +14,7 @@ import (
 var instance *api.Gateway
 
 // Create a new instance
-func newInstance(settings util.AppSettings) (*api.Gateway, error) {
+func newInstance(settings settings.AppSettings) (*api.Gateway, error) {
 	var err error
 	var g = api.Gateway{}
 
@@ -29,7 +29,7 @@ func newInstance(settings util.AppSettings) (*api.Gateway, error) {
 }
 
 // Create is a factory method to get the single instance of the gateway
-func Create(settings util.AppSettings) (*api.Gateway, error) {
+func Create(settings settings.AppSettings) (*api.Gateway, error) {
 	if instance != nil {
 		return nil, errors.New("Error: instance already created")
 	}
