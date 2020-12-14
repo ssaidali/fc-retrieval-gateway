@@ -98,6 +98,14 @@ func Error1(err error) {
 	}
 }
 
+// ErrorAndPanic logs an error and then calls panic with the same message.
+func ErrorAndPanic(msg string, args ...interface{}) {
+	if (LogLevelError <= logLevel) {
+		printf(LogLevelStrError, msg, args...)
+	}
+	panic(fmt.Sprintf(msg, args...))
+}
+
 // Warn prints out msg to the log target if the log level is WARN or lower. 
 // msg is interpreted as a format string and args as parameters to the format
 // string is there are any args.
