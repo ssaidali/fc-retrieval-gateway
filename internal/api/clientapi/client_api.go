@@ -85,7 +85,7 @@ func (c *ClientAPI) msgRouter(w rest.ResponseWriter, r *rest.Request) {
 	}
 
 	payload := messages.CommonRequestMessageFields{}
-	err = json.Unmarshal(content, payload)
+	err = json.Unmarshal(content, &payload)
 	if err != nil {
 		logging.Error("Failed to decode payload: %s.", err.Error())
 		rest.Error(w, "Failed to decode payload: " + err.Error(), http.StatusBadRequest)

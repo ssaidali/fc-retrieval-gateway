@@ -14,7 +14,7 @@ import (
 // HandleClientNetworkEstablishment is used to handle initial establishment http request from client
 func (g *ClientAPI) HandleClientNetworkEstablishment(w rest.ResponseWriter, content []byte) {
 	payload := messages.ClientEstablishmentRequest{}
-	err := json.Unmarshal(content, payload)
+	err := json.Unmarshal(content, &payload)
 	if err != nil {
 		s := "Client Establishment: Failed to decode payload."
 		logging.Error(s + err.Error())
