@@ -49,7 +49,7 @@ func startRestAPI(settings settings.AppSettings, c *ClientAPI, errChannel chan<-
 		rest.Get("/ip", getIP),         // Get IP address.
 		rest.Get("/host", getHostname), // Get host name.
 
-		rest.Post("/client/establishment", c.HandleClientNetworkEstablishment),       // Handle network establishment.
+//		rest.Post("/client/establishment", c.HandleClientNetworkEstablishment),       // Handle network establishment.
 		rest.Post("/client/standard_request_cid", c.HandleClientStandardCIDDiscover), // Handle client standard cid request.
 		rest.Post("/client/dht_request_cid", c.HandleClientDHTCIDDiscover),           // Handle DHT client cid request.
 		rest.Post("/v1", c.msgRouter),
@@ -68,8 +68,6 @@ func startRestAPI(settings settings.AppSettings, c *ClientAPI, errChannel chan<-
 }
 
 func (c *ClientAPI) msgRouter(w rest.ResponseWriter, r *rest.Request) {
-	logging.Info("Test 3")
-
 	logging.Trace("Received request via /v1 API")
 	payload := messages.CommonRequestMessageFields{}
 	err := r.DecodeJsonPayload(&payload)
