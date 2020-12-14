@@ -21,7 +21,7 @@ func (g *ClientAPI) HandleClientNetworkEstablishment(w rest.ResponseWriter, r *r
 		return
 	}
 	// TODO: For now just print the payload
-	log.Println(payload)
+	logging.Info("Payload %+v", payload)
 
 	now := util.GetTimeImpl().Now().Unix()
 	if payload.TTL > now {
