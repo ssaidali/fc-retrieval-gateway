@@ -69,11 +69,12 @@ func startRestAPI(settings settings.AppSettings, c *ClientAPI, errChannel chan<-
 }
 
 func (c *ClientAPI) msgRouter(w rest.ResponseWriter, r *rest.Request) {
+	logging.Trace("Received request via /v1 API")
 	payload := messages.CommonRequestMessageFields{}
 	err := r.DecodeJsonPayload(&payload)
 	if err != nil {
-		logging.Error("Fail to decode payload: %s.", err.Error())
-		rest.Error(w, "Fail to decode payload: " + err.Error(), http.StatusBadRequest)
+		logging.Error("Failed to decode payload: %s.", err.Error())
+		rest.Error(w, "Failed to decode payload: " + err.Error(), http.StatusBadRequest)
 		return
 	}
 
