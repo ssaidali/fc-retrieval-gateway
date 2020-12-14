@@ -3,6 +3,7 @@ package logging
 import (
 	"fmt"
 	"log"
+	"sync"
 )
 
 const (
@@ -35,6 +36,8 @@ const (
 
 var logLevel = int(LogLevelTrace)
 var logTarget = int(logTargetStdOutInt)
+var mutex sync.RWMutex
+
 
 // SetLogLevel allows the log level to be specified.
 func SetLogLevel(level string) {
@@ -149,6 +152,9 @@ func printf(level string, msg string, args ...interface{}) {
 
 	switch (logTarget) {
 	case logTargetStdOutInt:
+		// TODO will need to do better than this in the server so we don't block all of the time!
+		mutex.Lock()
+		defer mutex.Unlock()
 		log.Println(s)
 	default:
 		panic("Unknown log target")
