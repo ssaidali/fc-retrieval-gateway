@@ -73,7 +73,7 @@ func (c *ClientAPI) msgRouter(w rest.ResponseWriter, r *rest.Request) {
 	err := r.DecodeJsonPayload(&payload)
 	if err != nil {
 		logging.Error("Fail to decode payload: %s.", err.Error())
-		rest.Error(w, "Fail to decode payload.", http.StatusBadRequest)
+		rest.Error(w, "Fail to decode payload: " + err.Error(), http.StatusBadRequest)
 		return
 	}
 
