@@ -39,6 +39,11 @@ var logTarget = int(logTargetStdOutInt)
 var mutex sync.RWMutex
 
 
+// Init inialises the logging system
+func Init() {
+	mutex = sync.RWMutex{}
+}
+
 // SetLogLevel allows the log level to be specified.
 func SetLogLevel(level string) {
 	switch (level) {

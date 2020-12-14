@@ -15,6 +15,7 @@ import (
 
 
 func main() {
+	logging.Init()
 	settings := settings.LoadSettings()
 	logging.Info("Filecoin Gateway Start-up: Started")
 
