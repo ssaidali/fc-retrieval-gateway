@@ -36,11 +36,14 @@ func StartClientRestAPI(settings settings.AppSettings) (*ClientAPI, error) {
 
 	// Start the REST API and block until the error code is set.
 	errChan := make(chan error, 1)
+	logging.Info("Test 1")
 	go startRestAPI(settings, &c, errChan)
+	logging.Info("Test 2")
 	return &c, <-errChan
 }
 
 func startRestAPI(settings settings.AppSettings, c *ClientAPI, errChannel chan<- error) {
+	logging.Info("Test 3")
 
 	api := rest.NewApi()
 	api.Use(rest.DefaultDevStack...)
@@ -56,7 +59,7 @@ func startRestAPI(settings settings.AppSettings, c *ClientAPI, errChannel chan<-
 		rest.Post("/v1", c.msgRouter),
 	)
 	if err != nil {
-		logging.Error(err.Error())
+		logging.Error1(err)
 		errChannel <- err
 		return
 	}
