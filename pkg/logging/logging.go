@@ -35,7 +35,7 @@ const (
 	logTargetFile = "FILE"
 	logTargetFileInt = 1
 
-	logFileName = "/tmp/gateway.log"
+	logFileName = "/etc/gateway/gateway.log"
 
 )
 
@@ -43,7 +43,6 @@ const (
 var logLevel = int(LogLevelTrace)
 var logTarget = int(logTargetStdOutInt)
 var mutex sync.RWMutex
-
 
 // Init inialises the logging system
 func Init() {
@@ -170,6 +169,7 @@ func printf(level string, msg string, args ...interface{}) {
 
 	switch (logTarget) {
 	case logTargetStdOutInt:
+		// TODO will need to do better than this in the server so we don't block all of the time!
 		log.Println(s)
 	case logTargetFileInt:
 		f, err := os.OpenFile(logFileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
@@ -177,7 +177,7 @@ func printf(level string, msg string, args ...interface{}) {
 			panic(err)
 		}
 		defer f.Close()
-		if _, err := f.WriteString(s); err != nil {
+		if _, err := f.WriteString(s + "\n"); err != nil {
 			panic(err)
 		}
 

@@ -2,6 +2,6 @@
     "bindrestapi" : "80",
     "bindproviderapi": ":8090",
     "bindgatewayapi": ":8091",
-    "logtarget": "FILE",
+    "logtarget": "STDOUT",
     "loglevel": "INFO"
 }
