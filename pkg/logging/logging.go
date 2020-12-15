@@ -3,6 +3,7 @@ package logging
 import (
 	"fmt"
 	"log"
+	"os"
 	"sync"
 )
 
@@ -31,6 +32,11 @@ const (
 
 	logTargetStdOut = "STDOUT"
 	logTargetStdOutInt = 0
+	logTargetFile = "FILE"
+	logTargetFileInt = 1
+
+	logFileName = "/tmp/gateway.log"
+
 )
 
 
@@ -65,6 +71,8 @@ func SetLogTarget(target string) {
 	switch (target) {
 	case logTargetStdOut:
 		logTarget = logTargetStdOutInt
+	case logTargetFile:
+		logTarget = logTargetFileInt
 	default:
 		panic("Unknown Log Target: " + target)
 	}
@@ -155,12 +163,24 @@ func printf(level string, msg string, args ...interface{}) {
 	}
 	s = level + ": " + s
 
+	// TODO will need to do better than this in the server so we don't block all of the time!
+	// Block here to ensure only one thread at a time writes to the output device.
+	mutex.Lock()
+	defer mutex.Unlock()
+
 	switch (logTarget) {
 	case logTargetStdOutInt:
-		// TODO will need to do better than this in the server so we don't block all of the time!
-		mutex.Lock()
-		defer mutex.Unlock()
 		log.Println(s)
+	case logTargetFileInt:
+		f, err := os.OpenFile(logFileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+		if err != nil {
+			panic(err)
+		}
+		defer f.Close()
+		if _, err := f.WriteString(s); err != nil {
+			panic(err)
+		}
+
 	default:
 		panic("Unknown log target")
 	}
