@@ -40,14 +40,30 @@ func NewNodeID(id *big.Int) (*NodeID, error) {
 	return &n, nil
 }
 
-// NewNodeID2 creates a node id object
-func NewNodeID2(id []byte) (*NodeID, error) {
+// NewNodeIDFromBytes creates a node id object
+func NewNodeIDFromBytes(id []byte) (*NodeID, error) {
 	var n = NodeID{}
 	if len(id) > wordSize {
 		return nil, fmt.Errorf("NodeID: Incorrect size2: %d", len(id))
 	}
 	copy(n.id, id)
 	return &n, nil
+}
+
+// NewNodeIDFromString creates a NodeID from a string
+func NewNodeIDFromString(id string) (*NodeID, error) {
+	bytes, err := hex.DecodeString(id)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(bytes) > wordSize {
+		return nil, fmt.Errorf("NodeID: Incorrect size2: %d", len(id))
+	}
+	var n = NodeID{}
+	n.id = bytes
+	return &n, nil
+
 }
 
 // ToString returns a string for the node id.
