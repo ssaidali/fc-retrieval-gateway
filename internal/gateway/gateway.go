@@ -1,10 +1,12 @@
 package gateway
 
 import (
+	"crypto/ecdsa"
 	"errors"
 	"sync"
 
 	"github.com/ConsenSys/fc-retrieval-gateway/internal/gateway/clients"
+	"github.com/ConsenSys/fc-retrieval-gateway/internal/util/settings"
 	"github.com/ConsenSys/fc-retrieval-gateway/pkg/nodeid"
 )
 
@@ -23,6 +25,12 @@ type CommunicationChannels struct {
 type Gateway struct {
 	ProtocolVersion   int32
 	ProtocolSupported []int32
+
+	// GatewayID of this gateway
+	GatewayID *nodeid.NodeID
+
+	// Gateway Private Key ID of this gateway
+	GatewayPrivateKey *ecdsa.PrivateKey
 
 	// ActiveGateways store connected active gateways
 	// A map from gateway id (big int in string repr)
@@ -44,8 +52,25 @@ var instance *Gateway
 var doOnce sync.Once
 
 // GetSingleInstance returns the single instance of the gateway
-func GetSingleInstance() *Gateway {
+func GetSingleInstance(confs ...*settings.AppSettings) *Gateway {
 	doOnce.Do(func() {
+		if len(confs) == 0 {
+			panic("No settings supplied to Gateway start-up")
+		}
+		if len(confs) != 1 {
+			panic("More than one sets of settings supplied to Gateway start-up")
+		}
+		conf := confs[0]
+
+		gatewayPrivateKey, err1 := nodeid.LoadPrivateKey(conf.GatewayPrivKey)
+		if err1 != nil {
+			panic(err1)
+		}
+		gatewayID, err2 := nodeid.NewNodeIDFromString(conf.GatewayID) 
+		if err2 != nil {
+			panic(err2)
+		}
+
 		instance = &Gateway{
 			ProtocolVersion:     protocolVersion,
 			ProtocolSupported:   []int32{protocolVersion, protocolSupported},
@@ -53,7 +78,10 @@ func GetSingleInstance() *Gateway {
 			ActiveGatewaysLock:  sync.RWMutex{},
 			ActiveProviders:     make(map[string](*CommunicationChannels)),
 			ActiveProvidersLock: sync.RWMutex{},
-			GatewayClient:		 &clients.GatewayClientInteraction{}}
+			GatewayClient:		 &clients.GatewayClientInteraction{},
+			GatewayPrivateKey:	 gatewayPrivateKey,
+			GatewayID:			 gatewayID, 
+		}
 	})
 	return instance
 }

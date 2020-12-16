@@ -16,9 +16,11 @@ package nodeid
  */
 
 import (
+	"crypto/ecdsa"
+	"crypto/x509"
+	"encoding/hex"
 	"fmt"
 	"math/big"
-	"encoding/hex"
 )
 
 const wordSize = 32 // 32 bytes
@@ -69,6 +71,37 @@ func NewNodeIDFromString(id string) (*NodeID, error) {
 	return &n, nil
 
 }
+
+// TODO the node id is loaded from the root signing key , and not the node's private key 
+
+// NewNodeIDFromPrivateKey creates a NodeID from a private key
+// func NewNodeIDFromPrivateKey(pKeyStr string) (*NodeID, error) {
+// 	pKey, err := LoadPrivateKey(pKeyStr)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+
+// 	// TODO what curve is used here
+// 	// The private key has the public key information available.
+// 	x:= pKey.X
+// 	y := pKey.Y
+// 	concat := x.String() + y.String()
+// 	id := sha256.Sum256([]byte(concat))
+// 	return NewNodeIDFromBytes(id[:])
+// }
+
+
+// LoadPrivateKey loads a private key from a string
+func LoadPrivateKey(pkey string) (*ecdsa.PrivateKey, error) {
+	pKeyDerEncodedBytes, err := hex.DecodeString(pkey)
+	if err != nil {
+		return nil, err
+	}
+	return x509.ParseECPrivateKey(pKeyDerEncodedBytes)
+}
+
+
+
 
 // ToString returns a string for the node id.
 func (n *NodeID) ToString() string {

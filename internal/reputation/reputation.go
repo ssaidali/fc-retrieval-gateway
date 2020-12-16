@@ -15,11 +15,11 @@ var instance = newInstance()
 // Reputation manages the reputation of all other nodes in the system from this 
 // node's perspective.
 type Reputation struct {
-	clients          map[string]int
+	clients          map[string]int64
 	clientsMapLock   sync.RWMutex
-	gateways         map[string]int
+	gateways         map[string]int64
 	gatewaysMapLock  sync.RWMutex
-	providers        map[string]int
+	providers        map[string]int64
 	providersMapLock sync.RWMutex
 }
 
@@ -27,11 +27,11 @@ type Reputation struct {
 // Create a new instance
 func newInstance() *Reputation {
 	var r = Reputation{}
-	r.clients = make(map[string]int)
+	r.clients = make(map[string]int64)
 	r.clientsMapLock = sync.RWMutex{}
-	r.gateways = make(map[string]int)
+	r.gateways = make(map[string]int64)
 	r.gatewaysMapLock = sync.RWMutex{}
-	r.providers = make(map[string]int)
+	r.providers = make(map[string]int64)
 	r.providersMapLock = sync.RWMutex{}
 	return &r
 }
@@ -54,7 +54,7 @@ func (r *Reputation) ClientExists(clientNodeID *nodeid.NodeID) (exists bool) {
 }
 
 // GetClientReputation returns the client reputation.
-func (r *Reputation) GetClientReputation(clientNodeID *nodeid.NodeID) (val int, exists bool) {
+func (r *Reputation) GetClientReputation(clientNodeID *nodeid.NodeID) (val int64, exists bool) {
 	val, exists = r.getClientReputation(clientNodeID)
 	return
 }
@@ -62,12 +62,12 @@ func (r *Reputation) GetClientReputation(clientNodeID *nodeid.NodeID) (val int, 
 // ClientEstablishmentChallenge updates a Retrieval Client's reputation based on an
 // Establishment Challenge being received. The reputation is created for the Retrival 
 // Client if the client doesn't have a reputation yet
-func (r *Reputation) ClientEstablishmentChallenge(clientNodeID *nodeid.NodeID) {
+func (r *Reputation) ClientEstablishmentChallenge(clientNodeID *nodeid.NodeID) int64 {
 	_, exists := r.getClientReputation(clientNodeID)
 	if (!exists) {
 		r.establishClientReputation(clientNodeID)
 	}
-	r.changeClientReputation(clientNodeID, clientEstablishmentChallenge);
+	return r.changeClientReputation(clientNodeID, clientEstablishmentChallenge);
 }
 
 // OnChainDeposit updates a Retrieval Client's reputation based on an

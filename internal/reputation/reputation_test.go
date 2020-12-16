@@ -41,7 +41,7 @@ func TestClientRepDeposit(t *testing.T) {
 }
 
 func TestClientRepEstablishmentChallenge(t *testing.T) {
-	testClientReputationChange(t, GetSingleInstance().ClientEstablishmentChallenge, clientEstablishmentChallenge)
+	testClientReputationChange1(t, GetSingleInstance().ClientEstablishmentChallenge, clientEstablishmentChallenge)
 }
 
 func TestClientStdDiscOneCidOffer(t *testing.T) {
@@ -103,7 +103,7 @@ func TestClientRepMax(t *testing.T) {
 }
 
 
-func testClientReputationChange(t *testing.T, f func(clientNodeID *nodeid.NodeID), expectedChange int) {
+func testClientReputationChange(t *testing.T, f func(clientNodeID *nodeid.NodeID), expectedChange int64) {
 	id := nodeid.CreateRandomIdentifier()
 	n, err := nodeid.NewNodeID(id)
 	if err != nil {
@@ -116,3 +116,15 @@ func testClientReputationChange(t *testing.T, f func(clientNodeID *nodeid.NodeID
 	assert.Equal(t, clientInitialReputation + clientEstablishmentChallenge + expectedChange, rep, "reputation not set correctly")
 }
 
+func testClientReputationChange1(t *testing.T, f func(clientNodeID *nodeid.NodeID) int64, expectedChange int64) {
+	id := nodeid.CreateRandomIdentifier()
+	n, err := nodeid.NewNodeID(id)
+	if err != nil {
+		panic(err)
+	}
+	r := GetSingleInstance()
+	r.ClientEstablishmentChallenge(n)
+	f(n)
+	rep, _ := r.GetClientReputation(n)
+	assert.Equal(t, clientInitialReputation + clientEstablishmentChallenge + expectedChange, rep, "reputation not set correctly")
+}

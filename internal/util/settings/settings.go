@@ -19,6 +19,10 @@ const settingsDefaultBindGatewayAPI = "8091"
 const settingsDefaultLogLevel = "TRACE"
 const settingsDefaultLogTarget = "STDOUT"
 
+// TODO id doesn't make sense to have defaults for these values.
+const settingsDefaultGatewayID = "01"
+const settingsDefaultPrivateKey = "01"
+
 // AppSettings defines the server configuraiton
 type AppSettings struct {
 	BindRestAPI     string `json:"bindrestapi"`     // Port number to bind to for client REST API.
@@ -26,6 +30,8 @@ type AppSettings struct {
 	BindGatewayAPI  string `json:"bindgatewayapi"`  // Port number to bind to for gateway TCP communication API.
 	LogLevel        string `json:"loglevel"`        // Log Level: NONE, ERROR, WARN, INFO, TRACE
 	LogTarget       string `json:"logtarget"`       // Log Level: STDOUT
+	GatewayID       string `json:"gatewayid"`       // Node id of this gateway
+	GatewayPrivKey  string `json:"privatekey"`      // Gateway private key
 }
 
 var defaults = AppSettings{
@@ -34,6 +40,8 @@ var defaults = AppSettings{
 	settingsDefaultBindGatewayAPI,
 	settingsDefaultLogLevel,
 	settingsDefaultLogTarget,
+	settingsDefaultGatewayID,
+	settingsDefaultPrivateKey,
 }
 
 // TODO at present there is no way to get this global object. Do we need this?

@@ -34,8 +34,10 @@ func (c *GatewayClientInteraction) Establishment(req *messages.ClientEstablishme
 	}
 
 	repSystem := reputation.GetSingleInstance()
-
-	repSystem.ClientEstablishmentChallenge(clientID)
+	rep := repSystem.ClientEstablishmentChallenge(clientID)
+	if rep < 0 {
+		// TODO how to handle bad reputation. What should be returned?
+	}
 
 	resp := &messages.ClientEstablishmentResponse{}
 	resp.Challenge = req.Challenge

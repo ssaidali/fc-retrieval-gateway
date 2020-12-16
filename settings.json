@@ -3,5 +3,7 @@
     "bindproviderapi": ":8090",
     "bindgatewayapi": ":8091",
     "logtarget": "STDOUT",
-    "loglevel": "INFO"
+    "loglevel": "INFO",
+    "gatewayid": "101112131415161718191A1B1C1D1E1F202122232425262728292A2B2C2D2E2F",
+    "privatekey": "11223344556677889900"
 }
