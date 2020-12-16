@@ -42,8 +42,8 @@ func GetSingleInstance() *Reputation {
 	return instance
 }
 
-// EstablishClientReputation initialise the reputation of a Retrieval Client
-func (r *Reputation) EstablishClientReputation(clientNodeID *nodeid.NodeID) {
+// establishClientReputation initialise the reputation of a Retrieval Client
+func (r *Reputation) establishClientReputation(clientNodeID *nodeid.NodeID) {
 	r.setClientReputation(clientNodeID, clientInitialReputation)
 }
 
@@ -53,20 +53,20 @@ func (r *Reputation) ClientExists(clientNodeID *nodeid.NodeID) (exists bool) {
 	return
 }
 
-// GetClientReputation returns the client reputation, and creates a reputation for the Retrival Client 
-// if the client doesn't have a reputation yet.
-func (r *Reputation) GetClientReputation(clientNodeID *nodeid.NodeID) (val int) {
-	var exists bool
+// GetClientReputation returns the client reputation.
+func (r *Reputation) GetClientReputation(clientNodeID *nodeid.NodeID) (val int, exists bool) {
 	val, exists = r.getClientReputation(clientNodeID)
-	if (!exists) {
-		r.EstablishClientReputation(clientNodeID)
-	}
 	return
 }
 
 // ClientEstablishmentChallenge updates a Retrieval Client's reputation based on an
-// Establishment Challenge being received.
+// Establishment Challenge being received. The reputation is created for the Retrival 
+// Client if the client doesn't have a reputation yet
 func (r *Reputation) ClientEstablishmentChallenge(clientNodeID *nodeid.NodeID) {
+	_, exists := r.getClientReputation(clientNodeID)
+	if (!exists) {
+		r.establishClientReputation(clientNodeID)
+	}
 	r.changeClientReputation(clientNodeID, clientEstablishmentChallenge);
 }
 

@@ -6,10 +6,18 @@ import (
 	"github.com/ConsenSys/fc-retrieval-gateway/pkg/nodeid"
 )
 
+
+const (
+	clientStateNew = iota //1
+	clientStateFunded // 2
+)
+
 // GatewayClientInteraction holds data to manage the interaction between client and gateway
 type GatewayClientInteraction struct {
 
+
 }
+
 
 
 // NewGatewayClientInteraction creates a new object for handling client - gateways
@@ -26,7 +34,8 @@ func (c *GatewayClientInteraction) Establishment(req *messages.ClientEstablishme
 	}
 
 	repSystem := reputation.GetSingleInstance()
-	repSystem.EstablishClientReputation(clientID)
+
+	repSystem.ClientEstablishmentChallenge(clientID)
 
 	resp := &messages.ClientEstablishmentResponse{}
 	resp.Challenge = req.Challenge

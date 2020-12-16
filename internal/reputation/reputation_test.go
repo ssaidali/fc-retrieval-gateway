@@ -30,10 +30,10 @@ func TestClientRepInitial(t *testing.T) {
 		panic(err)
 	}
 	r := GetSingleInstance()
-	r.EstablishClientReputation(n)
+	r.ClientEstablishmentChallenge(n)
 
-	rep := r.GetClientReputation(n)
-	assert.Equal(t, clientInitialReputation, rep, "Initial reputation not set correctly")
+	rep, _ := r.GetClientReputation(n)
+	assert.Equal(t, clientInitialReputation + clientEstablishmentChallenge, rep, "Initial reputation not set correctly")
 }
 
 func TestClientRepDeposit(t *testing.T) {
@@ -91,27 +91,28 @@ func TestClientRepMax(t *testing.T) {
 		panic(err)
 	}
 	r := GetSingleInstance()
-	r.EstablishClientReputation(n)
+	r.ClientEstablishmentChallenge(n)
 
 	// Deposit enough to exceed maximum. This code will need to change if the reputation
 	// earned by doing a deposit is reduced.
 	for i := 0; i < 11; i++ {
 		r.OnChainDeposit(n)
 	}
-	rep := r.GetClientReputation(n)
+	rep, _ := r.GetClientReputation(n)
 	assert.Equal(t, clientMaxReputation, rep, "reputation does not equal max")
 }
 
 
 func testClientReputationChange(t *testing.T, f func(clientNodeID *nodeid.NodeID), expectedChange int) {
-	id := big.NewInt(2)
+	id := nodeid.CreateRandomIdentifier()
 	n, err := nodeid.NewNodeID(id)
 	if err != nil {
 		panic(err)
 	}
 	r := GetSingleInstance()
-	r.EstablishClientReputation(n)
+	r.ClientEstablishmentChallenge(n)
 	f(n)
-	rep := r.GetClientReputation(n)
-	assert.Equal(t, clientInitialReputation + expectedChange, rep, "reputation not set correctly")
+	rep, _ := r.GetClientReputation(n)
+	assert.Equal(t, clientInitialReputation + clientEstablishmentChallenge + expectedChange, rep, "reputation not set correctly")
 }
+
