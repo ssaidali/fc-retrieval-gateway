@@ -17,7 +17,10 @@ func GenKeyPair() (*ecdsa.PrivateKey, error) {
 
 // EncodePrivateKey converts a private key to a string
 func EncodePrivateKey(privateKey *ecdsa.PrivateKey) string {
-    x509Encoded, _ := x509.MarshalECPrivateKey(privateKey)
+    x509Encoded, err := x509.MarshalECPrivateKey(privateKey)
+    if err != nil {
+        panic(err)
+    }
     pemEncoded := pem.EncodeToMemory(&pem.Block{Type: "PRIVATE KEY", Bytes: x509Encoded})
     return string(pemEncoded)
 }

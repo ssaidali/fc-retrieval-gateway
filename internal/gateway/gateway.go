@@ -76,7 +76,7 @@ func GetSingleInstance(confs ...*settings.AppSettings) *Gateway {
 		}
 
 		gatewayPrivateKeyVersion := fcrcrypto.DecodeKeyVersion(conf.GatewayPrivKeyVersion)
-		gatewayPrivateKeySigAlg := fcrcrypto.DecodeSigAlg(conf.GatewayPrivKeyVersion)
+		gatewayPrivateKeySigAlg := fcrcrypto.DecodeSigAlg(conf.GatewaySigAlg)
 
 		instance = &Gateway{
 			ProtocolVersion:     protocolVersion,

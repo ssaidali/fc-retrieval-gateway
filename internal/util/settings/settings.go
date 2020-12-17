@@ -54,7 +54,7 @@ var defaults = AppSettings{
 var settings = defaults
 
 // LoadSettings loads the app settings from the settings file.
-func LoadSettings() (set AppSettings) {
+func LoadSettings() (AppSettings) {
 	// Load settings.
 	settingsBytes, err := ioutil.ReadFile(settingsLocContainer)
 	if err != nil {
