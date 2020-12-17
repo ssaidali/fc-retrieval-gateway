@@ -8,6 +8,7 @@ import (
 	"github.com/ConsenSys/fc-retrieval-gateway/internal/gateway/clients"
 	"github.com/ConsenSys/fc-retrieval-gateway/internal/util/settings"
 	"github.com/ConsenSys/fc-retrieval-gateway/pkg/fcrcrypto"
+	"github.com/ConsenSys/fc-retrieval-gateway/internal/offers"
 	"github.com/ConsenSys/fc-retrieval-gateway/pkg/nodeid"
 )
 
@@ -52,6 +53,9 @@ type Gateway struct {
 	ActiveProvidersLock sync.RWMutex
 
 	GatewayClient *clients.GatewayClientInteraction
+
+	// Offers, it is threadsafe.
+	Offers *offers.Offers
 }
 
 // Single instance of the gateway
@@ -90,6 +94,7 @@ func GetSingleInstance(confs ...*settings.AppSettings) *Gateway {
 			GatewayPrivateKeyVersion: gatewayPrivateKeyVersion,
 			GatewayPrivateKeySigAlg: gatewayPrivateKeySigAlg,
 			GatewayID:			 gatewayID, 
+			Offers:              offers.GetSingleInstance(),
 		}
 	})
 	return instance
