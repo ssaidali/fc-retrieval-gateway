@@ -7,6 +7,7 @@ import (
 
 	"github.com/ConsenSys/fc-retrieval-gateway/internal/gateway/clients"
 	"github.com/ConsenSys/fc-retrieval-gateway/internal/util/settings"
+	"github.com/ConsenSys/fc-retrieval-gateway/pkg/fcrcrypto"
 	"github.com/ConsenSys/fc-retrieval-gateway/pkg/nodeid"
 )
 
@@ -31,6 +32,12 @@ type Gateway struct {
 
 	// Gateway Private Key ID of this gateway
 	GatewayPrivateKey *ecdsa.PrivateKey
+
+	// GatewayPrivateKeyVersion is the key version number of the private key.
+	GatewayPrivateKeyVersion *fcrcrypto.KeyVersion
+
+	// GatewayPrivateKeySigAlg is the signing algorithm to be used with the private key.
+	GatewayPrivateKeySigAlg *fcrcrypto.SigAlg
 
 	// ActiveGateways store connected active gateways
 	// A map from gateway id (big int in string repr)
@@ -62,14 +69,14 @@ func GetSingleInstance(confs ...*settings.AppSettings) *Gateway {
 		}
 		conf := confs[0]
 
-		gatewayPrivateKey, err1 := nodeid.LoadPrivateKey(conf.GatewayPrivKey)
-		if err1 != nil {
-			panic(err1)
-		}
+		gatewayPrivateKey := fcrcrypto.DecodePrivateKey(conf.GatewayPrivKey)
 		gatewayID, err2 := nodeid.NewNodeIDFromString(conf.GatewayID) 
 		if err2 != nil {
 			panic(err2)
 		}
+
+		gatewayPrivateKeyVersion := fcrcrypto.DecodeKeyVersion(conf.GatewayPrivKeyVersion)
+		gatewayPrivateKeySigAlg := fcrcrypto.DecodeSigAlg(conf.GatewayPrivKeyVersion)
 
 		instance = &Gateway{
 			ProtocolVersion:     protocolVersion,
@@ -80,6 +87,8 @@ func GetSingleInstance(confs ...*settings.AppSettings) *Gateway {
 			ActiveProvidersLock: sync.RWMutex{},
 			GatewayClient:		 &clients.GatewayClientInteraction{},
 			GatewayPrivateKey:	 gatewayPrivateKey,
+			GatewayPrivateKeyVersion: gatewayPrivateKeyVersion,
+			GatewayPrivateKeySigAlg: gatewayPrivateKeySigAlg,
 			GatewayID:			 gatewayID, 
 		}
 	})

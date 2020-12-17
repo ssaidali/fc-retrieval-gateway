@@ -21,6 +21,8 @@ import (
 )
 
 
+// TODO use fcrcrypto
+
 // CreateRandomIdentifier generates a random id in the range 0 to 256**wordSize - 1
 // This is used for testing purposes only!!!!
 func CreateRandomIdentifier() (*big.Int) {
