@@ -1,15 +1,16 @@
 package providerapi
 
 import (
-	"bufio"
 	"encoding/json"
+	"net"
+	"time"
 
 	"github.com/ConsenSys/fc-retrieval-gateway/pkg/logging"
 	"github.com/ConsenSys/fc-retrieval-gateway/pkg/messages"
 	"github.com/ConsenSys/fc-retrieval-gateway/pkg/tcpcomms"
 )
 
-func handleProviderDHTPublishGroupCIDRequest(reader *bufio.Reader, writer *bufio.Writer, request *messages.ProviderDHTPublishGroupCIDRequest) error {
+func handleProviderDHTPublishGroupCIDRequest(conn net.Conn, request *messages.ProviderDHTPublishGroupCIDRequest) error {
 	// Do something about the internal request
 	// Will need gateway instance to read from db
 	// gateway, err := gateway.GetSingleInstance()
@@ -19,5 +20,5 @@ func handleProviderDHTPublishGroupCIDRequest(reader *bufio.Reader, writer *bufio
 		MessageType: messages.GatewayDHTDiscoverResponseType,
 		// This is just a dummy response
 	})
-	return tcpcomms.SendTCPMessage(writer, messages.ProviderDHTPublishGroupCIDResponseType, response)
+	return tcpcomms.SendTCPMessage(conn, messages.ProviderDHTPublishGroupCIDResponseType, response, timeoutDefault*time.Millisecond)
 }
