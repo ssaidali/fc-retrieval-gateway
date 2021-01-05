@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/ConsenSys/fc-retrieval-gateway/internal/gateway"
+	"github.com/ConsenSys/fc-retrieval-gateway/internal/util/settings"
 	"github.com/ConsenSys/fc-retrieval-gateway/pkg/messages"
 	"github.com/ConsenSys/fc-retrieval-gateway/pkg/tcpcomms"
 )
@@ -48,5 +49,5 @@ func handleGatewayDHTDiscoverRequest(conn net.Conn, request *messages.GatewayDHT
 	response.Signature = "TODO" // TODO, Sign the fields
 	// Send message
 	data, _ := json.Marshal(response)
-	return tcpcomms.SendTCPMessage(conn, messages.GatewayDHTDiscoverResponseType, data, timeoutDefault*time.Millisecond)
+	return tcpcomms.SendTCPMessage(conn, messages.GatewayDHTDiscoverResponseType, data, settings.DefaultTCPInactivityTimeoutMs*time.Millisecond)
 }

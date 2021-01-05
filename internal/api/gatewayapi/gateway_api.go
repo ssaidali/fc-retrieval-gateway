@@ -14,9 +14,6 @@ import (
 	"github.com/ConsenSys/fc-retrieval-gateway/pkg/tcpcomms"
 )
 
-// Default timeout for read/write. Unit is in milliseconds.
-const timeoutDefault = 100
-
 // StartGatewayAPI starts the TCP API as a separate go routine.
 func StartGatewayAPI(settings settings.AppSettings, g *gateway.Gateway) error {
 	// Start server
@@ -45,7 +42,7 @@ func handleIncomingGatewayConnection(conn net.Conn, g *gateway.Gateway) {
 
 	// Loop until error occurs and connection is dropped.
 	for {
-		msgType, data, err := tcpcomms.ReadTCPMessage(conn, timeoutDefault*time.Millisecond)
+		msgType, data, err := tcpcomms.ReadTCPMessage(conn, settings.DefaultTCPInactivityTimeoutMs*time.Millisecond)
 		if err != nil && !tcpcomms.IsTimeoutError(err) {
 			// Error in tcp communication, drop the connection.
 			logging.Error1(err)
@@ -65,7 +62,7 @@ func handleIncomingGatewayConnection(conn net.Conn, g *gateway.Gateway) {
 			}
 		}
 		// Message is invalid.
-		err = tcpcomms.SendInvalidMessage(conn, timeoutDefault*time.Millisecond)
+		err = tcpcomms.SendInvalidMessage(conn, settings.DefaultTCPInactivityTimeoutMs*time.Millisecond)
 		if err != nil && !tcpcomms.IsTimeoutError(err) {
 			// Error in tcp communication, drop the connection.
 			logging.Error1(err)
