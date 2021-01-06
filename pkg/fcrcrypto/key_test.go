@@ -24,19 +24,19 @@ import (
 
 
 func TestKeyEncodeDecode(t *testing.T) {
-    privateKey, err := GenKeyPair()
+    privateKey, err := GenKeyPairV1()
     if err != nil {
         panic(err)
     }
 
-    pKeyStr := EncodePrivateKey(privateKey)
-    pKey := DecodePrivateKey(pKeyStr)
-    pKeyStr1 := EncodePrivateKey(pKey)
+    pKeyStr := PEMEncodePrivateKey(privateKey)
+    pKey := PEMDecodePrivateKey(pKeyStr)
+    pKeyStr1 := PEMEncodePrivateKey(pKey)
     assert.Equal(t, pKeyStr, pKeyStr1, "Private Key round trip not working")
 
-    pubKeyStr := EncodePublicKey(&privateKey.PublicKey)
-    pubKey := DecodePublicKey(pubKeyStr)
-    pubKeyStr1 := EncodePublicKey(pubKey)
+    pubKeyStr := PEMEncodePublicKey(&privateKey.PublicKey)
+    pubKey := PEMDecodePublicKey(pubKeyStr)
+    pubKeyStr1 := PEMEncodePublicKey(pubKey)
     assert.Equal(t, pubKeyStr, pubKeyStr1, "Public Key round trip not working")
 }
 

@@ -4,19 +4,23 @@ import (
 	"crypto/ecdsa"
     "crypto/elliptic"
     "crypto/rand"
+    "crypto/sha512"
     "crypto/x509"
     "encoding/pem"
 )
 
+// GenKeyPairV1 generates a key pair
+func GenKeyPairV1() (*ecdsa.PrivateKey, error) {
+    return GenKeyPair(elliptic.P256())
+}
+
 // GenKeyPair generates a key pair
-func GenKeyPair() (*ecdsa.PrivateKey, error) {
-    curve := elliptic.P256()
+func GenKeyPair(curve elliptic.Curve) (*ecdsa.PrivateKey, error) {
     return ecdsa.GenerateKey(curve, rand.Reader)
 }
 
-
-// EncodePrivateKey converts a private key to a string
-func EncodePrivateKey(privateKey *ecdsa.PrivateKey) string {
+// PEMEncodePrivateKey converts a private key to a string
+func PEMEncodePrivateKey(privateKey *ecdsa.PrivateKey) string {
     x509Encoded, err := x509.MarshalECPrivateKey(privateKey)
     if err != nil {
         panic(err)
@@ -26,27 +30,51 @@ func EncodePrivateKey(privateKey *ecdsa.PrivateKey) string {
 }
 
 
-// EncodePublicKey converts a public key to a string
-func EncodePublicKey(publicKey *ecdsa.PublicKey) string {
+// PEMEncodePublicKey converts a public key to a string
+func PEMEncodePublicKey(publicKey *ecdsa.PublicKey) string {
     x509EncodedPub, _ := x509.MarshalPKIXPublicKey(publicKey)
     pemEncodedPub := pem.EncodeToMemory(&pem.Block{Type: "PUBLIC KEY", Bytes: x509EncodedPub})
     return string(pemEncodedPub)
 }
 
 
-// DecodePrivateKey converts a string to a private key
-func DecodePrivateKey(pemEncoded string) *ecdsa.PrivateKey {
+// PEMDecodePrivateKey converts a string to a private key
+func PEMDecodePrivateKey(pemEncoded string) *ecdsa.PrivateKey {
     block, _ := pem.Decode([]byte(pemEncoded))
     x509Encoded := block.Bytes
     privateKey, _ := x509.ParseECPrivateKey(x509Encoded)
     return privateKey
 }
 
-// DecodePublicKey converts a string to a public key
-func DecodePublicKey(pemEncodedPub string) *ecdsa.PublicKey {
+// PEMDecodePublicKey converts a string to a public key
+func PEMDecodePublicKey(pemEncodedPub string) *ecdsa.PublicKey {
     blockPub, _ := pem.Decode([]byte(pemEncodedPub))
     x509EncodedPub := blockPub.Bytes
     genericPublicKey, _ := x509.ParsePKIXPublicKey(x509EncodedPub)
     publicKey := genericPublicKey.(*ecdsa.PublicKey)
     return publicKey
+}
+
+// HashPublicKeyV1 is the initial version of public key to hash algorithm.
+// New algorithms may be used with later versions of the protocol
+func HashPublicKeyV1(publicKey *ecdsa.PublicKey) []byte {
+    return HashPublicKey(publicKey, sha512.New512_256())
+}
+
+
+// HashPublicKey generates a message digest that matches the public key.
+func HashPublicKey(publicKey *ecdsa.PublicKey, hasher hash.Hash) []byte {
+    xBytes := publicKey.X.Bytes()
+    yBytes := publicKey.Y.Bytes()
+
+
+    if _, err := hasher.Write(xBytes); err != nil {
+        // The message digest algorithm should never cause an error.
+		panic(fmt.Sprintf("Message digest algorithm is unable to process hashes: %v", err))
+    }
+    if _, err := hasher.Write(yBytes); err != nil {
+        // The message digest algorithm should never cause an error.
+		panic(fmt.Sprintf("Message digest algorithm is unable to process hashes: %v", err))
+    }
+    return hasher.Sum(nil)
 }

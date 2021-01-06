@@ -40,12 +40,12 @@ const (
 
 
 func TestEstablishMessage(t *testing.T) {
-    privateKey, err := GenKeyPair()
+    privateKey, err := GenKeyPairV1()
     if err != nil {
         panic(err)
     }
 
-    logging.Test("Private Key: %s", EncodePrivateKey(privateKey))
+    logging.Test("Private Key: %s", PEMEncodePrivateKey(privateKey))
 
     resp := CopiedClientEstablishmentResponse{}
     resp.MessageType = CopiedClientEstablishmentResponseType

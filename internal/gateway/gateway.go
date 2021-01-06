@@ -91,7 +91,7 @@ func GetSingleInstance(confs ...*settings.AppSettings) *Gateway {
 		}
 		conf := confs[0]
 
-		gatewayPrivateKey := fcrcrypto.DecodePrivateKey(conf.GatewayPrivKey)
+		gatewayPrivateKey := fcrcrypto.PEMDecodePrivateKey(conf.GatewayPrivKey)
 		gatewayID, err2 := nodeid.NewNodeIDFromString(conf.GatewayID)
 		if err2 != nil {
 			panic(err2)
