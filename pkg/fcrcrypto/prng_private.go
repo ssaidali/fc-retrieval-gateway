@@ -29,7 +29,7 @@ import (
 // should consider creating a separate PRNG using GetNewPrivatePRNG if security 
 // domain separation is required.
 func GeneratePrivateRandomBytes(b []byte) {
-	GetPrivatePRNG().Read(b)
+	GetPrivatePRNG().ReadBytes(b)
 }
 
 

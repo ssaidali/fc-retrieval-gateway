@@ -19,6 +19,7 @@ package fcrcrypto
 import (
 	"crypto/rand"
 	"encoding/binary"
+	"io"
 	"hash"
 	"math/big"
 	"net"
@@ -40,9 +41,10 @@ import (
 
 // Random is the interface for pseudo random number generators in this project.
 type Random interface {
-	Read(b []byte)
+	ReadBytes(b []byte)
 	Reseed(seed []byte)
 	QuickReseedKick()
+	GetReader() io.Reader
 }
 
 // RandomImpl holds the underlying DRBG and the PRF state.
@@ -72,8 +74,8 @@ func NewPRNG(securityDomain []byte) Random {
 }
 
 
-// Read reads random values into b
-func (r *randomImpl) Read(b []byte) {
+// ReadBytes reads random values into b
+func (r *randomImpl) ReadBytes(b []byte) {
 	lengthPerIteration := len(r.prfState)
 	lenOutput := len(b)
 
@@ -109,6 +111,13 @@ func (r *randomImpl) Read(b []byte) {
 }
 
 
+// Read reads random values into b
+func (r *randomImpl) Read(b []byte) (n int, err error) {
+	r.ReadBytes(b)
+	return len(b), nil
+}
+
+
 // Reseed adds seed material to the PRNG.
 func (r *randomImpl) Reseed(seed []byte) {
 	r.drbg.Reseed(seed)
@@ -127,6 +136,12 @@ func (r *randomImpl) Reseed(seed []byte) {
 func (r *randomImpl) QuickReseedKick() {
 	r.Reseed(nanotime())
 }
+
+// GetReader returns a reader than can be passed around in place of rand.Reader
+func (r *randomImpl) GetReader() io.Reader {
+	return r
+}
+
 
 
 // Nano time as bytes

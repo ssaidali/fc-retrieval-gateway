@@ -56,8 +56,8 @@ func TestNewPRNG(t *testing.T) {
 
 	securityDomain := []byte("test")
 	r := NewPRNG(securityDomain)
-	r.Read(b1)
-	r.Read(b2)
+	r.ReadBytes(b1)
+	r.ReadBytes(b2)
 
 	// The probability of the two random numbers being the same or zero is one in
 	// 2**256 and two in 2**256
@@ -80,14 +80,14 @@ func TestReadDifferentLengths(t *testing.T) {
 
 	securityDomain := []byte("test")
 	r := NewPRNG(securityDomain)
-	r.Read(b0)
-	r.Read(b1)
-	r.Read(b31)
-	r.Read(b33)
-	r.Read(b63)
-	r.Read(b64)
-	r.Read(b65)
-	r.Read(b10000)
+	r.ReadBytes(b0)
+	r.ReadBytes(b1)
+	r.ReadBytes(b31)
+	r.ReadBytes(b33)
+	r.ReadBytes(b63)
+	r.ReadBytes(b64)
+	r.ReadBytes(b65)
+	r.ReadBytes(b10000)
 }
 
 
@@ -99,11 +99,11 @@ func TestTwoSecurityDomains(t *testing.T) {
 
 	securityDomain1 := []byte("1")
 	r1 := NewPRNG(securityDomain1)
-	r1.Read(b1)
+	r1.ReadBytes(b1)
 
 	securityDomain2 := []byte("2")
 	r2 := NewPRNG(securityDomain2)
-	r2.Read(b2)
+	r2.ReadBytes(b2)
 
 	// The probability of the two random numbers being the same or zero is one in
 	// 2**256 and two in 2**256
@@ -127,4 +127,14 @@ func TestQuickSeed(t *testing.T) {
 	r.QuickReseedKick()
 }
 
+func TestGetReader(t *testing.T) {
+	securityDomain := []byte("test")
+	r := NewPRNG(securityDomain)
+	rand := r.GetReader()
+
+	b := make([]byte, 32)
+	l, err := rand.Read(b)
+	assert.Nil(t, err)
+	assert.Equal(t, l, len(b))
+}
 

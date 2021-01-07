@@ -24,7 +24,7 @@ func TestGetPublicPRNG(t *testing.T) {
 	b := make([]byte, 32)
 	zeroBytes := make([]byte, 32)
 	pub := GetPublicPRNG()
-	pub.Read(b)
+	pub.ReadBytes(b)
     assert.NotEqual(t, b, zeroBytes, "Random bytes all zero")
 }
 

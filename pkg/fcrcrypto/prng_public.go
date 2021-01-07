@@ -26,7 +26,7 @@ import (
 
 // GeneratePublicRandomBytes generates zero or more random numbers
 func GeneratePublicRandomBytes(b []byte) {
-	GetPublicPRNG().Read(b)
+	GetPublicPRNG().ReadBytes(b)
 }
 
 
