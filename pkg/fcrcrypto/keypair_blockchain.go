@@ -15,28 +15,7 @@ package fcrcrypto
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import (
-	"testing"
-
-    "github.com/stretchr/testify/assert"
-)
-
-
-
-func TestKeyEncodeDecode(t *testing.T) {
-    privateKey, err := GenKeyPairV1()
-    if err != nil {
-        panic(err)
-    }
-
-    pKeyStr := PEMEncodePrivateKey(privateKey)
-    pKey := PEMDecodePrivateKey(pKeyStr)
-    pKeyStr1 := PEMEncodePrivateKey(pKey)
-    assert.Equal(t, pKeyStr, pKeyStr1, "Private Key round trip not working")
-
-    pubKeyStr := PEMEncodePublicKey(&privateKey.PublicKey)
-    pubKey := PEMDecodePublicKey(pubKeyStr)
-    pubKeyStr1 := PEMEncodePublicKey(pubKey)
-    assert.Equal(t, pubKeyStr, pubKeyStr1, "Public Key round trip not working")
+// GenerateBlockchainKeyPair generates a key pair for use with the Filecoin blockchain
+func GenerateBlockchainKeyPair() (*KeyPair, error) {
+    return GenerateRetrievalV1KeyPair()
 }
-

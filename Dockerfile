@@ -19,7 +19,7 @@ COPY settings.json /go/bin/settings.json
 # Get all dependancies, but don't install.
 RUN go get -d -v github.com/ConsenSys/fc-retrieval-gateway/cmd/gateway
 # Do a full compile of app and dependancies, forcing static linking.
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o /go/bin/gateway github.com/ConsenSys/fc-retrieval-gateway/cmd/gateway
+RUN CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -o /go/bin/gateway github.com/ConsenSys/fc-retrieval-gateway/cmd/gateway
 
 
 # Don't do install, as build now done. 

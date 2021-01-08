@@ -37,7 +37,7 @@ type AppSettings struct {
 	LogTarget       string `json:"logtarget"`       // Log Level: STDOUT
 	GatewayID       string `json:"gatewayid"`       // Node id of this gateway
 	GatewayPrivKey  string `json:"privatekey"`      // Gateway private key
-	GatewayPrivKeyVersion uint8  `json:"keyversion"`      // Key version of gateway private key
+	GatewayPrivKeyVersion uint32  `json:"keyversion"`      // Key version of gateway private key
 	GatewaySigAlg   uint8  `json:"sigalg"`          // Signature algorithm to be used by private key.
 }
 
