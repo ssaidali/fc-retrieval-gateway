@@ -117,6 +117,7 @@ func (n *NodeID) UnmarshalJSON(p []byte) error {
 	if len(id) != wordSize {
 		return fmt.Errorf("NodeID: Incorrect size: %d", len(id))
 	}
+	n.id = make([]byte, wordSize)
 	copy(n.id, id)
 	return nil
 }
