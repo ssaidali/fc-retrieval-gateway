@@ -10,7 +10,7 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v2
       - name: Build Docker image
-        run: make build REGISTRY=${{ github.repository }}/ VERSION=${{ github.ref }}
+        run: make build REGISTRY=${{ github.repository }}/ VERSION=latest
       - name: Login to GitHub Packages
         uses: docker/login-action@v1
         with:
@@ -18,4 +18,4 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Push to GitHub Packages
-        run: docker push ${{ github.repository }}/fc-retrieval-client:${{ github.ref }}
+        run: docker push ${{ github.repository }}/fc-retrieval-client:latest
