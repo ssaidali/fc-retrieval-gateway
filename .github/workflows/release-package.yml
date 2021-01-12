@@ -18,4 +18,4 @@ jobs:
       - name: Build and push Docker image
         run: |
           make build REGISTRY=${{ github.repository }}/ VERSION=latest
-          docker push ${{ github.repository }}/fc-retrieval-client:latest
+          docker push ${{ github.repository }}/fc-retrieval-gateway:latest
