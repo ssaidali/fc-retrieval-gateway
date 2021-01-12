@@ -16,9 +16,9 @@ func handleProviderDHTPublishGroupCIDRequest(conn net.Conn, request *messages.Pr
 	// gateway, err := gateway.GetSingleInstance()
 	logging.Info("Provider request from: %s", request.ProviderID.ToString())
 	// Respond to provider.
-	response, _ := json.Marshal(messages.ProviderDHTPublishGroupCIDResponse{
+	response, _ := json.Marshal(messages.ProviderDHTPublishGroupCIDAck{
 		MessageType: messages.GatewayDHTDiscoverResponseType,
 		// This is just a dummy response
 	})
-	return tcpcomms.SendTCPMessage(conn, messages.ProviderDHTPublishGroupCIDResponseType, response, settings.DefaultTCPInactivityTimeout)
+	return tcpcomms.SendTCPMessage(conn, messages.ProviderDHTPublishGroupCIDAckType, response, settings.DefaultTCPInactivityTimeout)
 }

@@ -39,8 +39,8 @@ type ProviderDHTPublishGroupCIDRequest struct {
 	} `json:"cid_offers"`
 }
 
-// ProviderDHTPublishGroupCIDResponse is the response to ProviderDHTPublishGroupCIDRequest
-type ProviderDHTPublishGroupCIDResponse struct {
+// ProviderDHTPublishGroupCIDAck is the acknowledgement to ProviderDHTPublishGroupCIDRequest
+type ProviderDHTPublishGroupCIDAck struct {
 	MessageType     int32  `json:"message_type"`
 	ProtocolVersion int32  `json:"protocol_version"`
 	Nonce           int64  `json:"nonce"`

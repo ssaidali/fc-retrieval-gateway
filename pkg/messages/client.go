@@ -83,11 +83,11 @@ type ClientCIDGroupPublishDHTAckRequest struct {
 
 // ClientCIDGroupPublishDHTAckResponse is the response to ClientCIDGroupPublishDHTAckRequest
 type ClientCIDGroupPublishDHTAckResponse struct {
-	MessageType             int32                              `json:"message_type"`
-	ProtocolVersion         int32                              `json:"protocol_version"`
-	PieceCID                cid.ContentID                      `json:"piece_cid"`
-	GatewayID               nodeid.NodeID                      `json:"gateway_id"`
-	Found                   bool                               `json:"found"`
-	CIDGroupPublishToDHT    ProviderDHTPublishGroupCIDRequest  `json:"cid_group_publish_to_dht"`
-	CIDGroupPublishToDHTAck ProviderDHTPublishGroupCIDResponse `json:"cid_group_publish_to_dht_ack"`
+	MessageType             int32                             `json:"message_type"`
+	ProtocolVersion         int32                             `json:"protocol_version"`
+	PieceCID                cid.ContentID                     `json:"piece_cid"`
+	GatewayID               nodeid.NodeID                     `json:"gateway_id"`
+	Found                   bool                              `json:"found"`
+	CIDGroupPublishToDHT    ProviderDHTPublishGroupCIDRequest `json:"cid_group_publish_to_dht"`
+	CIDGroupPublishToDHTAck ProviderDHTPublishGroupCIDAck     `json:"cid_group_publish_to_dht_ack"`
 }

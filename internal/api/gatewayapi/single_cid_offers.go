@@ -8,6 +8,7 @@ import (
 	"github.com/ConsenSys/fc-retrieval-gateway/internal/gateway"
 	"github.com/ConsenSys/fc-retrieval-gateway/internal/util/settings"
 	"github.com/ConsenSys/fc-retrieval-gateway/pkg/cid"
+	"github.com/ConsenSys/fc-retrieval-gateway/pkg/fcrcrypto"
 	"github.com/ConsenSys/fc-retrieval-gateway/pkg/messages"
 	"github.com/ConsenSys/fc-retrieval-gateway/pkg/nodeid"
 	"github.com/ConsenSys/fc-retrieval-gateway/pkg/tcpcomms"
@@ -77,7 +78,12 @@ func AcknowledgeSingleCIDOffers(response *messages.GatewaySingleCIDOfferPublishR
 	}, len(response.PublishedGroupCIDs))
 	for i := 0; i < len(response.PublishedGroupCIDs); i++ {
 		cidOffersAck[i].Nonce = response.PublishedGroupCIDs[i].Nonce
-		cidOffersAck[i].Signature = "TODO" // TODO: Add signature
+		// Sign the offer
+		sig, err := fcrcrypto.SignMessage(g.GatewayPrivateKey, g.GatewayPrivateKeyVersion, response.PublishedGroupCIDs[i])
+		if err != nil {
+			return err
+		}
+		cidOffersAck[i].Signature = sig
 	}
 	request := messages.GatewaySingleCIDOfferPublishResponseAck{
 		MessageType:       messages.GatewaySingleCIDOfferPublishResponseAckType,
