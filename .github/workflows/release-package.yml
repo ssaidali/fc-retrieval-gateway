@@ -19,7 +19,7 @@ jobs:
           registry: $docker_registry
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Build and push Docker image
-        run: |
-          make build REGISTRY=$docker_registry/${{ github.repository }}/ VERSION=$docker_image_tag
-          docker push $docker_registry/${{ github.repository }}/$docker_image_name:$docker_image_tag
+      - name: Build Docker image
+        run: make build REGISTRY=$docker_registry/${{ github.repository }}/ VERSION=$docker_image_tag
+      - name: Push Docker image
+        run: docker push $docker_registry/${{ github.repository }}/$docker_image_name:$docker_image_tag
