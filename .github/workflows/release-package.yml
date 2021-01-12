@@ -17,5 +17,8 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build and push Docker image
         run: |
-          make build REGISTRY=${{ github.repository }}/ VERSION=latest
-          docker push ${{ github.repository }}/fc-retrieval-gateway:latest
+          make build REGISTRY=$repository/ VERSION=$tag
+          docker push $repository/fc-retrieval-gateway:$tag
+        env:
+          repository: docker.pkg.github.com/${{ github.repository }}
+          tag: latest
