@@ -16,7 +16,7 @@ jobs:
       - name: Login to GitHub Packages
         uses: docker/login-action@v1
         with:
-          registry: ${{ docker_registry }}
+          registry: docker.pkg.github.com
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build Docker image
